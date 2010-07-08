@@ -123,8 +123,14 @@ sub _value2object {
 
 sub _object2value {
     my $self = shift;    
-    my ($object) = @_;
-    return $object->{value};
+    my ($object, $opts) = @_;
+    if (my $graph = $opts->{instanciate}) {
+        die 'not a uri' unless $object->{type} eq 'uri';
+        return $graph->load($object->{value});
+    }
+    else {
+        return $object->{value};
+    }
 }
 
 =head2 get
@@ -184,6 +190,33 @@ sub set {
     my @objs = map { $self->_value2object($_) } @$values;
     $self->_property($uri, \@objs);
     return 1;
+}
+
+=head2 get_resources
+
+=cut
+
+sub get_resources {
+    my $self = shift;
+    my ($predicate, $graph) = @_;
+    my $uri = fencode(resolve($predicate));
+    my @values = map {
+        $self->_object2value($_, { instanciate => $graph })
+    } @{ $self->_property($uri) || [] };
+    return wantarray ? @values : shift @values;
+}
+
+=head2 get_referer_resources
+
+=cut
+
+sub get_referer_resources {
+    my $self = shift;
+    my ($predicate, $graph) = @_;
+    my $cursor = $graph->find({ $predicate => $self->subject });
+    my @refs;
+    while (my $ref = $cursor->next) { push @refs, $ref; }
+    return wantarray ? @refs : shift @refs;
 }
 
 =head2 as_rdf_json

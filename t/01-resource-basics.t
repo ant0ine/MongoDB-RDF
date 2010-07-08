@@ -8,7 +8,7 @@ use MongoDB;
 use MongoDB::RDF;
 
 my $mrdf = MongoDB::RDF->new(
-    database => MongoDB::Connection->new(host => 'localhost', port => 27017)->test_db
+    database => MongoDB::Connection->new(host => 'localhost', port => 27017)->test_rdf
 );
 isa_ok($mrdf, 'MongoDB::RDF');
 
