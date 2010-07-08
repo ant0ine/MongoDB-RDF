@@ -5,6 +5,11 @@ use base qw( MongoDB::RDF::Resource );
 
 __PACKAGE__->register_rdf_type( 'http://example.org/type1' );
 
+sub init {
+    my $self = shift;
+    $self->dc_title('my title');
+}
+
 1;
 
 package main;
@@ -30,7 +35,7 @@ my $r = MyClass->new('http://example.org/sub/0');
 isa_ok($r, 'MongoDB::RDF::Resource');
 isa_ok($r, 'MyClass');
 cmp_ok($r->rdf_type, 'eq', 'http://example.org/type1');
-ok $r->dc_title('my title');
+cmp_ok($r->dc_title, 'eq', 'my title', 'init processed');
 ok $graph->save($r);
 
 # load

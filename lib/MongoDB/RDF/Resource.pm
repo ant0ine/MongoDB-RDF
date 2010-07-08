@@ -38,6 +38,7 @@ sub new {
     if (my $type = $Class2rdf_type{$class}) {
         $self->set(rdf_type => $type);    
     }
+    $self->init if $self->can('init');
     return $self;
 }
 
