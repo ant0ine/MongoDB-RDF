@@ -42,7 +42,7 @@ sub register {
     my ($prefix, $uri) = @_;
     die 'prefix required' unless $prefix;
     die 'uri required' unless $uri;
-    $uri = canonical($uri);
+    $uri = canonical_uri($uri);
     $prefix = lc($prefix);
     $Ns{$prefix} = $uri;
     return 1;
