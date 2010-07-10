@@ -7,23 +7,16 @@ use MongoDB::RDF::Graph;
 use MongoDB::RDF::Namespace;
 use MongoDB::RDF::Resource;
 
+our $VERSION = '0.01';
+
 =head1 NAME
 
 MongoDB::RDF - Stores RDF-JSON documents in MongoDB.
 
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
-
-
 =head1 SYNOPSIS
 
  my $mrdf = MongoDB::RDF->new(
-     database => MongoDB::Connection->new(host => 'localhost', port => 27017)->test_db
+     database => MongoDB::Connection->new(host => 'localhost', port => 27017)->test_rdf
  );
  
  my $graph = $mrdf->default_graph;
@@ -32,7 +25,7 @@ our $VERSION = '0.01';
  $r->dc_title('my title');
  $graph->save($r);
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
 =head2 new
 
@@ -41,11 +34,14 @@ our $VERSION = '0.01';
 sub new {
     my $class = shift;
     my %args = @_;
-    # TODO validation 
-    return bless \%args, $class;
+    my $db = $args{database}
+        or die 'database required';
+    return bless { database => $db }, $class;
 }
 
 =head2 database
+
+Returns the MongoDB::Database object.
 
 =cut
 
@@ -62,7 +58,7 @@ sub default_graph {
     return $self->get_graph('default');
 }
 
-=head2 get_graph
+=head2 get_graph( $name )
 
 =cut
 
@@ -131,4 +127,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of MongoDB::RDF
+1;
