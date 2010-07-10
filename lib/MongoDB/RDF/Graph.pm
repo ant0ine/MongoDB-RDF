@@ -7,7 +7,7 @@ use MongoDB;
 use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
 use MongoDB::RDF::Namespace qw( resolve );
 
-=head2 new
+=head2 new( name => ..., mrdf => ... )
 
 =cut
 
@@ -15,7 +15,6 @@ sub new {
     my $class = shift;
     my %args = @_;
     my $self = bless {}, $class;
-    # TODO valiation
     for (qw(name mrdf)) {
         die "$_ required" unless $args{$_};    
         $self->{$_} = $args{$_};
@@ -27,6 +26,8 @@ sub new {
 }
 
 =head2 name
+
+Returns the graph name.
 
 =cut
 
@@ -46,9 +47,12 @@ sub collection {
     return $self->_mrdf->database->$name();
 }
 
-=head2 load
+=head2 load( $uri )
 
 Loads a resource from the graph.
+If this resource has a registered rdf_type, then this resource 
+will be reblessed to the corrsponding class.
+(See MongoDB::RDF::Resource->register_rdf_type)
 
 =cut
 
@@ -64,7 +68,7 @@ sub load {
     return MongoDB::RDF::Resource->new_from_document($doc);
 }
 
-=head2 save
+=head2 save( $resource )
 
 Saves a resource in the graph.
 
@@ -81,7 +85,7 @@ sub save {
     );
 }
 
-=head2 remove
+=head2 remove( $resource )
 
 removes a resource from the graph.
 

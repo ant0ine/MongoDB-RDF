@@ -60,6 +60,9 @@ sub default_graph {
 
 =head2 get_graph( $name )
 
+Returns the graph named $name, creates it if it doesn't exist.
+(A graph is mapped to a MongoDB::Collection)
+
 =cut
 
 sub get_graph {
