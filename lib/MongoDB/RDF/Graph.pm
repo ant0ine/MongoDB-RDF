@@ -6,6 +6,7 @@ use MongoDB;
 
 use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
 use MongoDB::RDF::Namespace qw( resolve );
+use MongoDB::RDF::Cursor;
 
 =head2 new( name => ..., mrdf => ... )
 
@@ -143,44 +144,6 @@ sub ensure_index {
     }
     my $c = $self->collection;
     $c->ensure_index($fields, $opts);
-}
-
-package MongoDB::RDF::Cursor;
-use strict;
-use warnings;
-
-sub new {
-    my $class = shift;
-    my ($cursor) = @_;
-    return bless { cursor => $cursor }, $class;
-}
-
-=head2 cursor
-
-Returns the underlying MongoDB::Cursor
-
-=cut
-
-sub cursor { $_[0]->{cursor} }
-
-=head2 next
-
-=cut
-
-sub next {
-    my $self = shift;    
-    my $doc = $self->cursor->next;
-    return unless $doc;
-    return MongoDB::RDF::Resource->_new_from_document($doc);
-}
-
-=head2 count
-
-=cut
-
-sub count {
-    my $self = shift;    
-    return $self->cursor->count(@_);
 }
 
 1;
