@@ -13,7 +13,7 @@ sub init {
 1;
 
 package main;
-use Test::More tests => 10;
+use Test::More tests => 16;
 use strict;
 
 use Data::Dumper;
@@ -40,10 +40,20 @@ ok $graph->save($r);
 
 # load
 my $r2 = $graph->load('http://example.org/sub/0');
-isa_ok($r, 'MongoDB::RDF::Resource');
-isa_ok($r, 'MyClass');
-cmp_ok($r->rdf_type, 'eq', 'http://example.org/type1');
+isa_ok($r2, 'MongoDB::RDF::Resource');
+isa_ok($r2, 'MyClass');
+cmp_ok($r2->rdf_type, 'eq', 'http://example.org/type1');
+cmp_ok($r2->dc_title, 'eq', 'my title');
+
+# find
+my $cursor = $graph->find_class( MyClass => { dc_title => 'my title' } );
+isa_ok($cursor, 'MongoDB::RDF::Cursor');
+my $r3 = $cursor->next;
+isa_ok($r3, 'MongoDB::RDF::Resource');
+isa_ok($r3, 'MyClass');
+cmp_ok($r3->rdf_type, 'eq', 'http://example.org/type1');
+cmp_ok($r3->dc_title, 'eq', 'my title');
 
 # remove
-$graph->remove($r2);
+$graph->remove($r);
 

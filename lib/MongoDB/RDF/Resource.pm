@@ -71,13 +71,12 @@ Returns the document as stored in MongoDB.
 
 sub document { $_[0]->{document} }
 
-=head2 new_from_document
 
-Should be private ? as document ?
+sub _rdf_type_to_class { $Rdf_type2class{$_[1]} }
 
-=cut
+sub _class_to_rdf_type { $Class2rdf_type{$_[1]} }
 
-sub new_from_document {
+sub _new_from_document {
     my $class = shift;
     my ($doc) = @_;
     return unless $doc;
@@ -200,6 +199,8 @@ sub set {
     return 1;
 }
 
+=head1 GRAPH METHODS
+
 =head2 get_resources
 
 =cut
@@ -226,6 +227,8 @@ sub get_referer_resources {
     while (my $ref = $cursor->next) { push @refs, $ref; }
     return wantarray ? @refs : shift @refs;
 }
+
+=head1 EXPORT METHODS
 
 =head2 as_rdf_json
 

@@ -65,7 +65,7 @@ sub load {
         { _subject => $uri },
     );
     return unless $doc;
-    return MongoDB::RDF::Resource->new_from_document($doc);
+    return MongoDB::RDF::Resource->_new_from_document($doc);
 }
 
 =head2 save( $resource )
@@ -116,6 +116,19 @@ sub find {
     return MongoDB::RDF::Cursor->new($cursor);
 }
 
+=head2 find_class
+
+=cut
+
+sub find_class {
+    my $self = shift;
+    my ($class, $query) = @_;
+    if (my $type = MongoDB::RDF::Resource->_class_to_rdf_type($class)) {
+        $query->{rdf_type} = $type;
+    }
+    return $self->find($query);
+}
+
 =head2 ensure_index
 
 =cut
@@ -158,7 +171,7 @@ sub next {
     my $self = shift;    
     my $doc = $self->cursor->next;
     return unless $doc;
-    return MongoDB::RDF::Resource->new_from_document($doc);
+    return MongoDB::RDF::Resource->_new_from_document($doc);
 }
 
 =head2 count
