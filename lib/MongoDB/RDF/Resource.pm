@@ -55,6 +55,14 @@ sub subject {
     return $self->{document}{_subject};
 }
 
+=head2 uri
+
+Alias of subject
+
+=cut
+
+sub uri { $_[0]->subject }
+
 =head2 document
 
 Returns the document as stored in MongoDB.
