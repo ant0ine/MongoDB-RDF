@@ -1,5 +1,5 @@
 
-use Test::More tests => 26;
+use Test::More tests => 27;
 use strict;
 
 use Data::Dumper;
@@ -55,10 +55,12 @@ isa_ok($graph, 'MongoDB::RDF::Graph');
     for (1..10) {
         my $r = MongoDB::RDF::Resource->new('http://example.org/'.$_);
         $r->dc_title('my title');
+        $r->dc_description($_);
         $graph->save($r);
         push @res, $r;
     }
 
+    # skip and limit
     my $cursor = $graph->find({ dc_title => 'my title' });
     isa_ok($cursor, 'MongoDB::RDF::Cursor');
     isa_ok($cursor->cursor, 'MongoDB::Cursor');
@@ -72,9 +74,19 @@ isa_ok($graph, 'MongoDB::RDF::Graph');
     my @subset = $cursor->all;
     cmp_ok(scalar(@subset), '==', 4, '4 results');
 
+    # reset
     $cursor->reset;
     @subset = $cursor->limit(2)->skip(3)->all;
     cmp_ok(scalar(@subset), '==', 2, '2 results');
+    
+    # or
+    my $query = { '$or' => [
+        { dc_description => 1 },
+        { dc_description => 2 },
+        { dc_description => 3 },
+    ] };
+    @subset = $graph->find($query)->all;
+    cmp_ok(scalar(@subset), '==', 3, '3 results');
 
     $graph->remove($_) for @res;
 }

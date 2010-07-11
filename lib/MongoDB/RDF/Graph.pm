@@ -4,7 +4,7 @@ use warnings;
 
 use MongoDB;
 
-use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
+use MongoDB::RDF::Util qw( canonical_uri fencode fdecode convert_query );
 use MongoDB::RDF::Namespace qw( resolve );
 use MongoDB::RDF::Cursor;
 
@@ -106,12 +106,7 @@ sub remove {
 sub find {
     my $self = shift;
     my ($query) = @_;
-    for my $key (keys %$query) {
-        my $value = delete $query->{$key};
-        $key = fencode(resolve($key)).'.value';
-        # TODO $elemMatch or dotnotation ?
-        $query->{$key} = $value;
-    }
+    convert_query($query);
     my $c = $self->collection;
     my $cursor = $c->find($query);
     return MongoDB::RDF::Cursor->new($cursor);
