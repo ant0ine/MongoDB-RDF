@@ -1,5 +1,5 @@
 
-use Test::More tests => 27;
+use Test::More tests => 50;
 use strict;
 
 use Data::Dumper;
@@ -87,6 +87,17 @@ isa_ok($graph, 'MongoDB::RDF::Graph');
     ] };
     @subset = $graph->find($query)->all;
     cmp_ok(scalar(@subset), '==', 3, '3 results');
+
+    # sort
+    $cursor = $graph->find({ dc_title => 'my title' })->sort({ dc_description => 1 });
+    isa_ok($cursor, 'MongoDB::RDF::Cursor');
+    isa_ok($cursor->cursor, 'MongoDB::Cursor');
+    cmp_ok($cursor->count, '==', 10, '10 results');
+    for (1..10) {
+        my $first = $cursor->next;
+        isa_ok $first, 'MongoDB::RDF::Resource';
+        cmp_ok($first->dc_description, '==', $_, 'order by description desc');
+    }
 
     $graph->remove($_) for @res;
 }

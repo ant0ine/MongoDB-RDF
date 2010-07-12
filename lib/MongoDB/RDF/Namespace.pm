@@ -5,7 +5,7 @@ use warnings;
 use Exporter 'import';
 our @EXPORT_OK = qw( resolve );
 
-use MongoDB::RDF::Util qw( canonical_uri );
+use MongoDB::RDF::Util;
 
 # in memory not in a mongo collection
 # this keeps mongo agnostic about the namespace used
@@ -42,7 +42,7 @@ sub register {
     my ($prefix, $uri) = @_;
     die 'prefix required' unless $prefix;
     die 'uri required' unless $uri;
-    $uri = canonical_uri($uri);
+    $uri = MongoDB::RDF::Util::canonical_uri($uri);
     $prefix = lc($prefix);
     $Ns{$prefix} = $uri;
     return 1;

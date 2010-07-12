@@ -2,6 +2,9 @@ package MongoDB::RDF::Cursor;
 use strict;
 use warnings;
 
+use MongoDB::RDF::Namespace qw( resolve );
+use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
+
 =head2 new
 
 =cut
@@ -85,7 +88,7 @@ Proxy to MongoDB::Cursor::skip. Returns a MongoDB::RDF::Cursor.
 
 =cut
 
-sub skip { shift->_proxy('skip', @_) }
+sub skip { shift->_proxy(skip => @_) }
 
 =head2 limit
 
@@ -93,7 +96,26 @@ Proxy to MongoDB::Cursor::limit. Returns a MongoDB::RDF::Cursor.
 
 =cut
 
-sub limit { shift->_proxy('limit', @_) }
+sub limit { shift->_proxy(limit => @_) }
+
+=head2 sort
+
+TODO explain why it sort by the first value of the predicate.
+
+=cut
+
+sub sort { 
+    my $self = shift;
+    my ($order) = @_;
+
+    for my $key (keys %$order) {
+        my $value = delete $order->{$key};
+        $key = fencode(resolve($key)).'.0.value';
+        $order->{$key} = $value;
+    }
+
+    $self->_proxy('sort' => $order);
+}
 
 =head2 hint
 
@@ -102,13 +124,5 @@ TODO
 =cut
 
 sub hint { shift->cursor->hint(@_) }
-
-=head2 sort
-
-TODO
-
-=cut
-
-sub sort { shift->cursor->sort(@_) }
 
 1;
