@@ -7,7 +7,7 @@ use MongoDB::RDF::Graph;
 use MongoDB::RDF::Namespace;
 use MongoDB::RDF::Resource;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
