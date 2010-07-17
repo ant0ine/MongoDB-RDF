@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use MongoDB;
+use MongoDB::OID;
 
 use MongoDB::RDF::Util qw( canonical_uri fencode fdecode convert_query );
 use MongoDB::RDF::Namespace qw( resolve );
@@ -64,6 +65,22 @@ sub load {
     my $c = $self->collection;
     my $doc = $c->find_one(
         { _subject => $uri },
+    );
+    return unless $doc;
+    return MongoDB::RDF::Resource->_new_from_document($doc);
+}
+
+=head2 load_by_mongodb_id( $id )
+
+=cut
+
+sub load_by_mongodb_id {
+    my $self = shift;
+    my $id = shift or die 'id required';
+    my $oid = MongoDB::OID->new( value => $id );
+    my $c = $self->collection;
+    my $doc = $c->find_one(
+        { _id => $oid },
     );
     return unless $doc;
     return MongoDB::RDF::Resource->_new_from_document($doc);

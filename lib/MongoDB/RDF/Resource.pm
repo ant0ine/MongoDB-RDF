@@ -3,12 +3,15 @@ use strict;
 use warnings;
 
 use JSON::Any;
+use Encode;
 
 use MongoDB::RDF::Namespace qw( resolve );
 use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
 
 my %Rdf_type2class;
 my %Class2rdf_type;
+
+our $ENCODE_UTF8 = 1;
 
 =head2 register_rdf_type
 
@@ -62,6 +65,18 @@ Alias of subject
 =cut
 
 sub uri { $_[0]->subject }
+
+
+=head1 ACCESSING UNDERLYING MONGODB DOCUMENT.
+
+=head2 mongodb_id
+
+=cut
+
+sub mongodb_id {
+    my $oid = $_[0]->document->{_id};
+    return $oid ? $oid->to_string : undef;
+}
 
 =head2 document
 
@@ -136,7 +151,9 @@ sub _object2value {
         return $graph->load($object->{value});
     }
     else {
-        return $object->{value};
+        return $ENCODE_UTF8 ?
+            encode_utf8($object->{value}) :
+            $object->{value};
     }
 }
 
