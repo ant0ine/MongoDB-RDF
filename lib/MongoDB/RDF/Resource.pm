@@ -3,15 +3,12 @@ use strict;
 use warnings;
 
 use JSON::Any;
-use Encode;
 
 use MongoDB::RDF::Namespace qw( resolve );
 use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
 
 my %Rdf_type2class;
 my %Class2rdf_type;
-
-our $ENCODE_UTF8 = 1;
 
 =head2 register_rdf_type
 
@@ -151,9 +148,7 @@ sub _object2value {
         return $graph->load($object->{value});
     }
     else {
-        return $ENCODE_UTF8 ?
-            encode_utf8($object->{value}) :
-            $object->{value};
+        return $object->{value};
     }
 }
 
