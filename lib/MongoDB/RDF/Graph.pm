@@ -23,7 +23,11 @@ sub _new {
     return $self;
 }
 
-=head2 name
+sub _mrdf { $_[0]->{mrdf} }
+
+=head1 METHODS
+
+=head2 $self->name
 
 Returns the graph name.
 
@@ -31,13 +35,11 @@ Returns the graph name.
 
 sub name { $_[0]->{name} }
 
-sub _mrdf { $_[0]->{mrdf} }
-
-=head2 load( $uri )
+=head2 $self->load( $uri )
 
 Loads a resource from the graph.
 If this resource has a registered rdf_type, then this resource 
-will be reblessed to the corrsponding class.
+will be reblessed to the corresponding class.
 (See MongoDB::RDF::Resource->register_rdf_type)
 
 =cut
@@ -54,23 +56,7 @@ sub load {
     return MongoDB::RDF::Resource->_new_from_document($doc);
 }
 
-=head2 load_by_mongodb_id( $id )
-
-=cut
-
-sub load_by_mongodb_id {
-    my $self = shift;
-    my $id = shift or die 'id required';
-    my $oid = MongoDB::OID->new( value => $id );
-    my $c = $self->collection;
-    my $doc = $c->find_one(
-        { _id => $oid },
-    );
-    return unless $doc;
-    return MongoDB::RDF::Resource->_new_from_document($doc);
-}
-
-=head2 save( $resource )
+=head2 $self->save( $resource )
 
 Saves a resource in the graph.
 
@@ -87,9 +73,9 @@ sub save {
     );
 }
 
-=head2 remove( $resource )
+=head2 $self->remove( $resource )
 
-removes a resource from the graph.
+Removes a resource from the graph.
 
 =cut
 
@@ -100,7 +86,10 @@ sub remove {
     return $c->remove({ _subject => $resource->subject });
 }
 
-=head2 find
+=head2 $self->find( { ... } )
+
+Finds resources in the graph.
+Returns a MongoDB::RDF::Cursor.
 
 =cut
 
@@ -113,7 +102,9 @@ sub find {
     return MongoDB::RDF::Cursor->new($cursor);
 }
 
-=head2 find_class
+=head2 $self->find_class( 'MyClass' => { ... } )
+
+Returns a MongoDB::RDF::Cursor.
 
 =cut
 
@@ -154,6 +145,22 @@ sub collection {
     my $self = shift;
     my $name = $self->name;
     return $self->_mrdf->database->$name();
+}
+
+=head2 load_by_mongodb_id( $id )
+
+=cut
+
+sub load_by_mongodb_id {
+    my $self = shift;
+    my $id = shift or die 'id required';
+    my $oid = MongoDB::OID->new( value => $id );
+    my $c = $self->collection;
+    my $doc = $c->find_one(
+        { _id => $oid },
+    );
+    return unless $doc;
+    return MongoDB::RDF::Resource->_new_from_document($doc);
 }
 
 1;
