@@ -5,7 +5,7 @@ use warnings;
 use JSON::Any;
 
 use MongoDB::RDF::Namespace qw( resolve );
-use MongoDB::RDF::Util qw( canonical_uri fencode fdecode );
+use MongoDB::RDF::Util qw( canonical_uri looks_like_uri fencode fdecode );
 
 my %Rdf_type2class;
 my %Class2rdf_type;
@@ -135,9 +135,12 @@ sub _property {
 sub _value2object {
     my $self = shift;    
     my ($value) = @_;
-    my $type = $value =~ /^[a-zA-Z]\w+:/ ? 'uri' : 'literal';
-    $value = canonical_uri($value) if $type eq 'uri';
-    return { type => $type, value => $value };
+    if (looks_like_uri($value)) {
+        return { type => 'uri', value => canonical_uri($value) };
+    }
+    else {
+        return { type => 'literal', value => $literal };
+    }
 }
 
 sub _object2value {

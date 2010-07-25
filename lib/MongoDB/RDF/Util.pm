@@ -5,17 +5,30 @@ use warnings;
 use MongoDB::RDF::Namespace;
 
 use Exporter 'import';
-our @EXPORT_OK = qw( canonical_uri fencode fdecode convert_query );
+our @EXPORT_OK = qw( canonical_uri looks_like_uri fencode fdecode convert_query );
 
 use URI;
 
 =head2 canonical_uri
+
+MongoDB::RDF stores in the documents the URI in their canonical form.
 
 =cut
 
 sub canonical_uri {
     my ($uri) = @_;
     return URI->new($uri)->canonical->as_string;
+}
+
+=head2 looks_like_uri
+
+Returns 1 if this looks like a URI.
+(Not a strict validation)
+
+=cut
+
+sub looks_like_uri {
+    return $_[0] =~ /^[a-zA-Z]\w+:\S+$/;
 }
 
 =head2 fencode
