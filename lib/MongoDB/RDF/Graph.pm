@@ -9,11 +9,7 @@ use MongoDB::RDF::Util qw( canonical_uri fencode fdecode convert_query );
 use MongoDB::RDF::Namespace qw( resolve );
 use MongoDB::RDF::Cursor;
 
-=head2 new( name => ..., mrdf => ... )
-
-=cut
-
-sub new {
+sub _new {
     my $class = shift;
     my %args = @_;
     my $self = bless {}, $class;

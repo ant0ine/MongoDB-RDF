@@ -62,7 +62,7 @@ Returns the graph named $name, creates it if it doesn't exist.
 sub get_graph {
     my $self = shift;
     my ($name) = @_;
-    return MongoDB::RDF::Graph->new(
+    return MongoDB::RDF::Graph->_new(
         name => $name,
         mrdf => $self,
     );
