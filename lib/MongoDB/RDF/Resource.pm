@@ -64,26 +64,6 @@ Alias of subject
 sub uri { $_[0]->subject }
 
 
-=head1 ACCESSING UNDERLYING MONGODB DOCUMENT.
-
-=head2 mongodb_id
-
-=cut
-
-sub mongodb_id {
-    my $oid = $_[0]->document->{_id};
-    return $oid ? $oid->to_string : undef;
-}
-
-=head2 document
-
-Returns the document as stored in MongoDB.
-
-=cut
-
-sub document { $_[0]->{document} }
-
-
 sub _rdf_type_to_class { $Rdf_type2class{$_[1]} }
 
 sub _class_to_rdf_type { $Class2rdf_type{$_[1]} }
@@ -155,7 +135,20 @@ sub _object2value {
     }
 }
 
-=head2 get
+=head1 PROPERTY METHODS
+
+$predicate can be a full URI string, or the namespace notation.
+Also this namespace notation can be sued directly as a method to replace 'get' and 'set'.
+
+Example:
+
+ $self->get( 'http://purl.org/dc/elements/1.1/title' );
+ # or
+ $self->get( 'dc_title' );
+ # or
+ $self->dc_title;
+
+=head2 $self->get( $predicate )
 
 =cut
 
@@ -169,7 +162,7 @@ sub get {
     return wantarray ? @values : shift @values;
 }
 
-=head2 add
+=head2 $self->add( $predicate => $value )
 
 =cut
 
@@ -183,7 +176,7 @@ sub add {
     return 1;
 }
 
-=head2 del
+=head2 $self->del( $predicate => $value )
 
 =cut
 
@@ -200,7 +193,7 @@ sub del {
     return 1;
 }
 
-=head2 set
+=head2 $self->set( $predicate => [ $v1, $v2, ...] )
 
 =cut
 
@@ -216,7 +209,7 @@ sub set {
 
 =head1 GRAPH METHODS
 
-=head2 get_resources
+=head2 $self->get_resources( $predicate , $graph )
 
 =cut
 
@@ -230,7 +223,7 @@ sub get_resources {
     return wantarray ? @values : shift @values;
 }
 
-=head2 get_referer_resources
+=head2 $self->get_referer_resources( $predicate, $graph )
 
 =cut
 
@@ -246,6 +239,8 @@ sub get_referer_resources {
 =head1 EXPORT METHODS
 
 =head2 as_rdf_json
+
+Returns a RDF/JSON document. See <http://n2.talis.com/wiki/RDF_JSON_Specification>.
 
 =cut
 
@@ -275,6 +270,27 @@ sub as_ntriples {
     my $self = shift;    
     # TODO 
 }
+
+=head1 ACCESSING UNDERLYING MONGODB OBJECTS
+
+=head2 mongodb_id
+
+=cut
+
+sub mongodb_id {
+    my $oid = $_[0]->document->{_id};
+    return $oid ? $oid->to_string : undef;
+}
+
+=head2 document
+
+Returns the document as stored in MongoDB.
+
+=cut
+
+sub document { $_[0]->{document} }
+
+
 
 our $AUTOLOAD;
 

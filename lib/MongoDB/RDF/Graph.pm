@@ -37,18 +37,6 @@ sub name { $_[0]->{name} }
 
 sub _mrdf { $_[0]->{mrdf} }
 
-=head2 collection
-
-Gives you direct access to the MongoDB::Collection hidden behind the graph.
-
-=cut
-
-sub collection {
-    my $self = shift;
-    my $name = $self->name;
-    return $self->_mrdf->database->$name();
-}
-
 =head2 load( $uri )
 
 Loads a resource from the graph.
@@ -156,6 +144,20 @@ sub ensure_index {
     }
     my $c = $self->collection;
     $c->ensure_index($fields, $opts);
+}
+
+=head1 ACCESSING UNDERLYING MONGODB OBJECTS.
+
+=head2 collection
+
+Gives you direct access to the MongoDB::Collection hidden behind the graph.
+
+=cut
+
+sub collection {
+    my $self = shift;
+    my $name = $self->name;
+    return $self->_mrdf->database->$name();
 }
 
 1;

@@ -1,45 +1,41 @@
-MongoDB::RDF - Stores RDF-JSON documents in MongoDB.
+NAME
+    MongoDB::RDF - Stores RDF-JSON documents in MongoDB.
 
-MongoDB + RDF-JSON + Perl
+SYNOPSIS
+     my $mrdf = MongoDB::RDF->new(
+         database => MongoDB::Connection->new(host => 'localhost', port => 27017)->test_rdf
+     );
+ 
+     my $graph = $mrdf->default_graph;
+ 
+     my $r = MongoDB::RDF::Resource->new('http://example.org/0');
+     $r->dc_title('my title');
+     $graph->save($r);
 
-INSTALLATION
+METHODS
+  new( database => $mdb )
+    Takes a MongoDB::Database in argument.
 
-To install this module, run the following commands:
+  default_graph
+    Returns the default graph object.
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+  get_graph( $name )
+    Returns the graph named $name, creates it if it doesn't exist. (A graph
+    is mapped to a MongoDB::Collection)
 
-SUPPORT AND DOCUMENTATION
+ACCESSING UNDERLYING MONGODB OBJECTS.
+  database
+    Returns the MongoDB::Database object.
 
-After installing, you can find documentation for this module with the
-perldoc command.
-
-    perldoc MongoDB::RDF
-
-You can also look for information at:
-
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=MongoDB-RDF
-
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/MongoDB-RDF
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/MongoDB-RDF
-
-    Search CPAN
-        http://search.cpan.org/dist/MongoDB-RDF/
-
+AUTHOR
+    Antoine Imbert, `<antoine.imbert at gmail.com>'
 
 LICENSE AND COPYRIGHT
+    Copyright 2010 Antoine Imbert.
 
-Copyright (C) 2010 Antoine Imbert
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of either: the GNU General Public License as published
+    by the Free Software Foundation; or the Artistic License.
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
+    See http://dev.perl.org/licenses/ for more information.
 
