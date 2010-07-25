@@ -119,7 +119,7 @@ sub _value2object {
         return { type => 'uri', value => canonical_uri($value) };
     }
     else {
-        return { type => 'literal', value => $literal };
+        return { type => 'literal', value => $value };
     }
 }
 
