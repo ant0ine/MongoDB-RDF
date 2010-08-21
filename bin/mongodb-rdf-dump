@@ -1,0 +1,43 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+
+use Getopt::Long;
+use MongoDB;
+use MongoDB::Connection;
+
+use MongoDB::RDF;
+
+GetOptions(
+    "host=s"    => \my($host),
+    "port=s"    => \my($port),
+    "dbname=s"  => \my($db_name),
+
+    "format=s"  => \my($format),
+    "graph=s"  => \my($graph),
+    "limit=s"  => \my($limit),
+);
+
+$port ||= 27017;
+$host ||= 'localhost';
+die "dbname required" unless $db_name;
+
+my $mrdf = MongoDB::RDF->new(
+    database => MongoDB::Connection->new(
+        host => $host,
+        port => $port,
+    )->$db_name()
+);
+
+$format ||= 'NTriples';
+my $class = "MongoDB::RDF::Serializer::$format";
+eval "require $class;";
+die "format not supported: cannot load $class" if $@;
+
+$graph = $graph ? $mrdf->get_graph($graph) : $mrdf->default_graph;
+
+$class->dump(
+    graph => $graph,
+    $limit ? ( limit => $limit ) : (),
+);
+

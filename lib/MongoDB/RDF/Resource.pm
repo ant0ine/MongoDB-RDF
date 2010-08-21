@@ -127,7 +127,8 @@ sub _object2value {
     my $self = shift;    
     my ($object, $opts) = @_;
     if (my $graph = $opts->{instanciate}) {
-        die 'not a uri' unless $object->{type} eq 'uri';
+        die 'type is not uri, type: '.$object->{type}.' value: '.$object->{value}
+            unless $object->{type} eq 'uri';
         return $graph->load($object->{value});
     }
     else {
@@ -267,8 +268,10 @@ sub as_rdf_xml {
 =cut
 
 sub as_ntriples {
-    my $self = shift;    
-    # TODO 
+    my $self = shift;
+    my $class = 'MongoDB::RDF::Serializer::NTriples';
+    eval "require $class";
+    return $class->serialize_resource($self);
 }
 
 =head1 ACCESSING UNDERLYING MONGODB OBJECTS
@@ -289,8 +292,6 @@ Returns the document as stored in MongoDB.
 =cut
 
 sub document { $_[0]->{document} }
-
-
 
 our $AUTOLOAD;
 
