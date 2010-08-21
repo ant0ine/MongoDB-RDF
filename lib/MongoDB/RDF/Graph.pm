@@ -20,6 +20,7 @@ sub _new {
     # TODO maintain a global cache of the ensured indexes
     # the cost of ensure_index may not be negligable 
     $self->collection->ensure_index({ _subject => 1 }, { unique => 1 });
+    $self->ensure_index({ rdf_type => 1 });
     return $self;
 }
 
