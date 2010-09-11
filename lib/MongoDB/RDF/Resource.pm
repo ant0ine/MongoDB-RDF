@@ -61,7 +61,7 @@ Alias of subject
 
 =cut
 
-sub uri { $_[0]->subject }
+sub uri { shift->subject(@_) }
 
 
 sub _rdf_type_to_class { $Rdf_type2class{$_[1]} }
