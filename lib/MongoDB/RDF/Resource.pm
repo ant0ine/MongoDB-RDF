@@ -10,20 +10,22 @@ use MongoDB::RDF::Util qw( canonical_uri looks_like_uri fencode fdecode );
 my %Rdf_type2class;
 my %Class2rdf_type;
 
-=head2 register_rdf_type
+=head1 NAME
 
-=cut
+MongoDB::RDF::Resource
 
-sub register_rdf_type {
-    my $class = shift;
-    my ($uri) = @_;
-    # TODO check $class
-    # TODO check $uri 
-    $Rdf_type2class{$uri} = $class;
-    $Class2rdf_type{$class} = $uri;
-}
+=head1 SYNOPSIS
 
-=head2 new
+ use MongoDB::RDF::Resource;
+
+ my $r =  MongoDB::RDF::Resource->new('http://foo.bar');
+ $r->dc_title('My title');
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 $class->new( $uri )
 
 =cut
 
@@ -42,7 +44,7 @@ sub new {
     return $self;
 }
 
-=head2 subject
+=head2 $self->subject
 
 =cut
 
@@ -55,7 +57,7 @@ sub subject {
     return $self->{document}{_subject};
 }
 
-=head2 uri
+=head2 $self->uri
 
 Alias of subject
 
@@ -138,8 +140,8 @@ sub _object2value {
 
 =head1 PROPERTY METHODS
 
-$predicate can be a full URI string, or the namespace notation.
-Also this namespace notation can be sued directly as a method to replace 'get' and 'set'.
+$predicate can be a canonical URI string, or the namespace notation.
+Also this namespace notation can be used directly as a method to replace 'get' and 'set'.
 
 Example:
 
@@ -239,7 +241,7 @@ sub get_referer_resources {
 
 =head1 EXPORT METHODS
 
-=head2 as_rdf_json
+=head2 $self->as_rdf_json
 
 Returns a RDF/JSON document. See <http://n2.talis.com/wiki/RDF_JSON_Specification>.
 
@@ -254,7 +256,7 @@ sub as_rdf_json {
     return $j->objToJson($obj);
 }
 
-=head2 as_rdf_xml
+=head2 $self->as_rdf_xml
 
 =cut
 
@@ -263,7 +265,9 @@ sub as_rdf_xml {
     # TODO 
 }
 
-=head2 as_ntriples
+=head2 $self->as_ntriples
+
+Loads the NTriples serializer and return the resource serialized in NTriples.
 
 =cut
 
@@ -276,7 +280,9 @@ sub as_ntriples {
 
 =head1 ACCESSING UNDERLYING MONGODB OBJECTS
 
-=head2 mongodb_id
+=head2 $self->mongodb_id
+
+Returns the MongoDB ID of the document.
 
 =cut
 
@@ -285,13 +291,50 @@ sub mongodb_id {
     return $oid ? $oid->to_string : undef;
 }
 
-=head2 document
+=head2 $self->document
 
 Returns the document as stored in MongoDB.
 
 =cut
 
 sub document { $_[0]->{document} }
+
+=head1 SUBSCLASSING
+
+MongoDB::RDF::Resource can be subsclassed like this:
+
+ package MyClass;
+ use base qw( MongoDB::RDF::Resource );
+
+ __PACKAGE__->register_rdf_type( 'http://my.domain/myclass' );
+
+ ...
+
+ my $r = MyClass->new('http://myinstance');
+ # $r->rdf_type is 'http://my.domain/myclass'
+ $graph->save($r);
+
+ ...
+ 
+ my $r = $graph->load('http://myinstance');
+ # $r is a MyClass
+
+Your class is now associated with a rdf_type. When this class will be instanciated,
+the objects will automatically get the corresponding rdf_type property.
+The same when this resource will be loaded from the graph,
+it will be blessed into the corresponding class.
+
+=head2 $class->register_rdf_type( $uri )
+
+=cut
+
+sub register_rdf_type {
+    my $class = shift;
+    my ($uri) = @_;
+    my $uri = canonical_uri($uri);
+    $Rdf_type2class{$uri} = $class;
+    $Class2rdf_type{$class} = $uri;
+}
 
 our $AUTOLOAD;
 
