@@ -25,9 +25,13 @@ MongoDB::RDF - Stores RDF-JSON documents in MongoDB.
  $r->dc_title('my title');
  $graph->save($r);
 
+=head1 DESCRIPTION
+
+This module help you manage RDF resources stored as RDF-JSON documents in a MongoDB database.
+
 =head1 METHODS
 
-=head2 new( database => $mdb )
+=head2 $class->new( database => $mdb )
 
 Takes a MongoDB::Database in argument.
 
@@ -41,7 +45,7 @@ sub new {
     return bless { database => $db }, $class;
 }
 
-=head2 default_graph
+=head2 $self->default_graph
 
 Returns the default graph object.
 
@@ -52,7 +56,7 @@ sub default_graph {
     return $self->get_graph('default');
 }
 
-=head2 get_graph( $name )
+=head2 $self->get_graph( $name )
 
 Returns the graph named $name, creates it if it doesn't exist.
 (A graph is mapped to a MongoDB::Collection)
@@ -91,7 +95,6 @@ under the terms of either: the GNU General Public License as published
 by the Free Software Foundation; or the Artistic License.
 
 See http://dev.perl.org/licenses/ for more information.
-
 
 =cut
 

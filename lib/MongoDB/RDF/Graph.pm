@@ -9,6 +9,19 @@ use MongoDB::RDF::Util qw( canonical_uri fencode fdecode convert_query );
 use MongoDB::RDF::Namespace qw( resolve );
 use MongoDB::RDF::Cursor;
 
+=head1 NAME
+
+MongoDB::RDF::Graph
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+This is the place where to save, load, delete and find a set of resources.
+This is mapped to a MongoDB Collection.
+
+=cut
+
 sub _new {
     my $class = shift;
     my %args = @_;
@@ -105,6 +118,8 @@ sub find {
 
 =head2 $self->find_class( 'MyClass' => { ... } )
 
+Similar to the "find" method except that specifying the class automatically
+add the ritgh rdf_type term in your query.
 Returns a MongoDB::RDF::Cursor.
 
 =cut
@@ -118,7 +133,14 @@ sub find_class {
     return $self->find($query);
 }
 
-=head2 ensure_index
+=head2 $self->ensure_index( $predicate => $opt )
+
+Create the index if it does not already exist.
+Note that rdf_type and _subject already have an index defined.
+
+Example:
+
+ $self->ensure_index( dc_title => 1 )
 
 =cut
 
@@ -136,7 +158,7 @@ sub ensure_index {
 
 =head1 ACCESSING UNDERLYING MONGODB OBJECTS.
 
-=head2 collection
+=head2 $self->collection
 
 Gives you direct access to the MongoDB::Collection hidden behind the graph.
 
@@ -148,7 +170,7 @@ sub collection {
     return $self->_mrdf->database->$name();
 }
 
-=head2 load_by_mongodb_id( $id )
+=head2 $self->load_by_mongodb_id( $id )
 
 =cut
 
