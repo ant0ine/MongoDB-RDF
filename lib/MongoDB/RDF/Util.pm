@@ -27,7 +27,7 @@ Returns 1 if this looks like a URI.
 
 =cut
 
-sub looks_like_uri {
+sub looks_like_uri {  # XXX we may want to not guess, and assume that the value is a canonical uri
     return $_[0] =~ /^[a-zA-Z]\w+:\S+$/;
 }
 

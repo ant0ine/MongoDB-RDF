@@ -1,11 +1,11 @@
 
-use Test::More tests => 5 + 5;
+use Test::More tests => 5 + 5 + 4;
 use strict;
 
 use Data::Dumper;
 
 use MongoDB;
-use MongoDB::RDF::Util qw( looks_like_uri );
+use MongoDB::RDF::Util qw( looks_like_uri canonical_uri );
 
 
 # looks_like_uri
@@ -34,6 +34,15 @@ for (@invalid_uris) {
     ok !looks_like_uri($_);
 }
 
+my %canonicals = (
+    'http://example.org/test index.html' => 'http://example.org/test%20index.html',
+    ' http://example.org' => 'http://example.org/',
+    'HTTP://example.org' => 'http://example.org/',
+    'http://example.org//' => 'http://example.org//',
+);
 
-
+for (keys %canonicals) {
+    my $expected = $canonicals{$_};
+    cmp_ok( canonical_uri($_), 'eq', $expected);    
+}
 
