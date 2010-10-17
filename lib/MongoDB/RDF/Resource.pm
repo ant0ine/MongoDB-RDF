@@ -331,7 +331,7 @@ it will be blessed into the corresponding class.
 sub register_rdf_type {
     my $class = shift;
     my ($uri) = @_;
-    my $uri = canonical_uri($uri);
+    $uri = canonical_uri($uri);
     $Rdf_type2class{$uri} = $class;
     $Class2rdf_type{$class} = $uri;
 }
