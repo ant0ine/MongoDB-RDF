@@ -1,6 +1,7 @@
 
-use Test::More tests => 16;
+use Test::More tests => 22;
 use strict;
+use warnings;
 
 use Data::Dumper;
 
@@ -88,4 +89,19 @@ $graph->remove($r2);
 my $r3 = $graph->load('http://example.org/0');
 ok(!$r3, 'has been removed');
 
+# blank nodes
+my $blank = MongoDB::RDF::Resource->new;
+isa_ok($blank, 'MongoDB::RDF::Resource');
+ok($blank->uri, 'has a uri');
+
+# save
+ok $graph->save($blank);
+
+my $blank2 = $graph->load($blank->uri);
+isa_ok($blank2, 'MongoDB::RDF::Resource');
+ok($blank2->uri, 'has a uri');
+cmp_ok( $blank->mongodb_id, 'eq', $blank2->mongodb_id, 'same mongodb_id');
+
+# remove
+$graph->remove($blank);
 

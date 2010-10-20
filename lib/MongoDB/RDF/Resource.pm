@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use JSON::Any;
+use MongoDB::OID;
 
 use MongoDB::RDF::Namespace qw( resolve );
 use MongoDB::RDF::Util qw( canonical_uri looks_like_uri fencode fdecode );
@@ -27,33 +28,55 @@ MongoDB::RDF::Resource
 
 =head2 $class->new( $uri )
 
+if $uri is undef, then a blank node is created.
+
 =cut
 
 sub new {
     my $class = shift;
     my ($subject) = @_;
-    die "subject required" unless $subject;
+
     my $self = bless {
         document => {},
     }, $class;
-    $self->subject($subject);
+
+    $self->set_subject($subject);
+
     if (my $type = $Class2rdf_type{$class}) {
         $self->set(rdf_type => $type);    
     }
+
     $self->init if $self->can('init');
+
     return $self;
 }
 
+=head2 $self->set_subject( $uri )
+
+Set the subject, if $uri is undef a blank node URI is created.
+(Used by the constructor)
+
+=cut
+
+sub set_subject {
+    my $self = shift;    
+    my ($uri) = @_;
+    unless ($uri) {
+        my $oid = MongoDB::OID->new;
+        $self->{document}{_id} = $oid;
+        $uri = 'urn:oid:'.$oid->value;
+    }
+    return $self->{document}{_subject} = canonical_uri($uri);
+}
+
 =head2 $self->subject
+
+Returns the subject.
 
 =cut
 
 sub subject {
     my $self = shift;    
-    my ($uri) = @_;
-    if ($uri) {
-        $self->{document}{_subject} = canonical_uri($uri);
-    }
     return $self->{document}{_subject};
 }
 
@@ -63,7 +86,7 @@ Alias of subject
 
 =cut
 
-sub uri { shift->subject(@_) }
+sub uri { shift->subject }
 
 
 sub _rdf_type_to_class { $Rdf_type2class{$_[1]} }
@@ -288,7 +311,7 @@ Returns the MongoDB ID of the document.
 
 sub mongodb_id {
     my $oid = $_[0]->document->{_id};
-    return $oid ? $oid->to_string : undef;
+    return $oid ? $oid->value : undef;
 }
 
 =head2 $self->document
