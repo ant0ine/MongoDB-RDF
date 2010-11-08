@@ -152,7 +152,7 @@ sub _object2value {
     my $self = shift;    
     my ($object, $opts) = @_;
     if (my $graph = $opts->{instanciate}) {
-        die 'type is not uri, type: '.$object->{type}.' value: '.$object->{value}
+        die '['.$self->mongodb_id.'] type is not uri, value: '.$object->{value}
             unless $object->{type} eq 'uri';
         return $graph->load($object->{value});
     }
