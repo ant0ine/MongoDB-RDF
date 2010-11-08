@@ -11,6 +11,8 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
         'JSON::Any' => 0,
         'URI' => 0,
+        'Data::Dumper' => 0,
+        'Getopt::Long' => 0,
         'MongoDB' => 0,
     },
     add_to_cleanup      => [ 'MongoDB-RDF-*' ],
