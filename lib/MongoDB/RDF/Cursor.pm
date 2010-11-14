@@ -110,7 +110,7 @@ sub sort {
 
     for my $key (keys %$order) {
         my $value = delete $order->{$key};
-        $key = fencode(resolve($key)).'.0.value';
+        $key = fencode(resolve($key)).'.value';
         $order->{$key} = $value;
     }
 
