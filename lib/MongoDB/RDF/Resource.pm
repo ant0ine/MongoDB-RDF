@@ -219,7 +219,9 @@ sub del {
     return 1;
 }
 
-=head2 $self->set( $predicate => [ $v1, $v2, ...] )
+=head2 $self->set( $predicate => $v1, $v2, ... )
+
+or $self->set( $predicate ); to remove all the values.
 
 =cut
 
