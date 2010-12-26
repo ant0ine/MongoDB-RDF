@@ -2,6 +2,7 @@ package MongoDB::RDF::Graph;
 use strict;
 use warnings;
 
+use Tie::IxHash;
 use MongoDB;
 use MongoDB::OID;
 
@@ -76,6 +77,8 @@ Saves a resource in the graph.
 
 =cut
 
+# TODO, would be nice to update the object with the new mongodb_id
+
 sub save {
     my $self = shift;
     my ($resource) = @_;
@@ -133,25 +136,32 @@ sub find_class {
     return $self->find($query);
 }
 
-=head2 $self->ensure_index( $predicate => $opt )
+=head2 $self->ensure_index( { $predicate => 1 }, $opt )
 
 Create the index if it does not already exist.
 Note that rdf_type and _subject already have an index defined.
 
 Example:
 
- $self->ensure_index( dc_title => 1 )
+ $self->ensure_index( { dc_title => 1 } )
+ $self->ensure_index( { dc_title => 1 }, { unique => 1 } )
+ $self->ensure_index( Tie::IxHash->new( dc_title => 1, dc_date => 1 ) )
 
 =cut
 
 sub ensure_index {
     my $self = shift;
     my ($fields, $opts) = @_;
-    for my $key (keys %$fields) {
-        my $value = delete $fields->{$key};
+    $fields = Tie::IxHash->new(%$fields)
+        if ref $fields eq 'HASH';
+
+    for (my $i=0; $i<$fields->Length; $i++) {
+        my $key = $fields->Keys($i);
+        my $value = $fields->Values($i);
         $key = fencode(resolve($key)).'.value';
-        $fields->{$key} = $value;
+        $fields->Replace($i, $key, $value);
     }
+
     my $c = $self->collection;
     $c->ensure_index($fields, $opts);
 }

@@ -1,5 +1,5 @@
 
-use Test::More tests => 50;
+use Test::More tests => 52;
 use strict;
 
 use Data::Dumper;
@@ -45,9 +45,21 @@ isa_ok($graph, 'MongoDB::RDF::Graph');
     my $cursor2 = $graph->find({ dc_title => 'my title' });
     isa_ok($cursor2, 'MongoDB::RDF::Cursor');
     cmp_ok($cursor2->count, '==', 1, 'one result');
+    
+    # check that no index is used
+    $cursor = $graph->find({ dc_title => 'my title' });
+    ok $cursor->explain->{cursor} =~ /BasicCursor/, 'no index used';
+    
+    # add an index on dc_title
+    $graph->ensure_index({ dc_title => 1}, { name => 'test_index', safe => 1 });
+    $cursor = $graph->find({ dc_title => 'my title' });
+    ok $cursor->explain->{cursor} =~ /BtreeCursor/, 'index used';
 
     # remove
     $graph->remove($r);
+
+    # drop index
+    $graph->collection->drop_index('test_index');
 }
 
 {
