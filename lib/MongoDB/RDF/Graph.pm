@@ -159,7 +159,7 @@ sub ensure_index {
         my $key = $fields->Keys($i);
         my $value = $fields->Values($i);
         $key = fencode(resolve($key)).'.value';
-        $fields->Replace($i, $key, $value);
+        $fields->Replace($i, $value, $key);
     }
 
     my $c = $self->collection;
