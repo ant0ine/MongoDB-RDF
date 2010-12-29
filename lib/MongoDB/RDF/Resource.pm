@@ -110,7 +110,6 @@ sub _new_from_document {
 
 =cut
 
-# TODO make decoded option the default ?
 sub properties {
     my $self = shift;
     my %opts = @_;
@@ -119,7 +118,7 @@ sub properties {
         next if $key eq '_id';
         next if $key eq '_subject';
         my $value = $self->_property($key);
-        $key = fdecode($key) if $opts{decoded};
+        $key = fdecode($key) unless $opts{encoded};
         $p{$key} = $value;
     }
     return \%p;
@@ -287,7 +286,7 @@ Returns a RDF/JSON document. See <http://n2.talis.com/wiki/RDF_JSON_Specificatio
 sub as_rdf_json {
     my $self = shift;    
     my $obj = {
-        $self->subject => $self->properties( decoded => 1 )
+        $self->subject => $self->properties
     };
     my $j = JSON::Any->new; 
     return $j->objToJson($obj);

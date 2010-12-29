@@ -24,7 +24,7 @@ not 'set';
 ok $r->dc_title('my title');
 ok $r->rss_link('http://example.org/1', 'http://example.org/2');
 my $ref = {
-'http://purl%2Eorg/rss/1%2E0/link' => [
+'http://purl.org/rss/1.0/link' => [
   {
     'value' => 'http://example.org/1',
     'type' => 'uri'
@@ -34,7 +34,7 @@ my $ref = {
     'type' => 'uri'
   }
 ],
-'http://purl%2Eorg/dc/elements/1%2E1/title' => [
+'http://purl.org/dc/elements/1.1/title' => [
   {
     'value' => 'my title',
     'type' => 'literal'
@@ -47,13 +47,13 @@ is_deeply($r->properties, $ref, 'properties')
 note 'del';
 ok $r->del(rss_link => 'http://example.org/2');
 is_deeply($r->properties, {
-'http://purl%2Eorg/rss/1%2E0/link' => [
+'http://purl.org/rss/1.0/link' => [
   {
     'value' => 'http://example.org/1',
     'type' => 'uri'
   },
 ],
-'http://purl%2Eorg/dc/elements/1%2E1/title' => [
+'http://purl.org/dc/elements/1.1/title' => [
   {
     'value' => 'my title',
     'type' => 'literal'
@@ -65,7 +65,7 @@ is_deeply($r->properties, {
 # removing all the elements of the property remove this property
 ok $r->del(rss_link => 'http://example.org/1');
 is_deeply($r->properties, {
-'http://purl%2Eorg/dc/elements/1%2E1/title' => [
+'http://purl.org/dc/elements/1.1/title' => [
   {
     'value' => 'my title',
     'type' => 'literal'

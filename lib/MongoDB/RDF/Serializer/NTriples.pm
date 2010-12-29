@@ -44,7 +44,7 @@ sub serialize_resource {
     my ($resource) = @_;
     my $subject = '<'.$resource->subject.'>';
     my @r;
-    my $props = $resource->properties( decoded => 1 );
+    my $props = $resource->properties;
     for my $key (keys %$props) {
         my $predicate  = '<'.$key.'>';
         for my $obj (@{ $props->{$key} })  {
