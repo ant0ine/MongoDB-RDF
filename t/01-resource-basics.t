@@ -1,5 +1,5 @@
 
-use Test::More tests => 22;
+use Test::More tests => 25;
 use strict;
 use warnings;
 
@@ -16,11 +16,11 @@ isa_ok($mrdf, 'MongoDB::RDF');
 my $graph = $mrdf->default_graph;
 isa_ok($graph, 'MongoDB::RDF::Graph');
 
-# new resource
+note 'new resource';
 my $r = MongoDB::RDF::Resource->new('http://example.org/0');
 isa_ok($r, 'MongoDB::RDF::Resource');
 
-# set
+not 'set';
 ok $r->dc_title('my title');
 ok $r->rss_link('http://example.org/1', 'http://example.org/2');
 my $ref = {
@@ -44,7 +44,7 @@ my $ref = {
 is_deeply($r->properties, $ref, 'properties')
     or print STDERR Dumper($r->properties);
 
-# del
+note 'del';
 ok $r->del(rss_link => 'http://example.org/2');
 is_deeply($r->properties, {
 'http://purl%2Eorg/rss/1%2E0/link' => [
@@ -62,39 +62,52 @@ is_deeply($r->properties, {
 }, 'properties')
     or print STDERR Dumper($r->properties);
 
-# add
+# removing all the elements of the property remove this property
+ok $r->del(rss_link => 'http://example.org/1');
+is_deeply($r->properties, {
+'http://purl%2Eorg/dc/elements/1%2E1/title' => [
+  {
+    'value' => 'my title',
+    'type' => 'literal'
+  }
+]
+}, 'properties')
+    or print STDERR Dumper($r->properties);
+
+note 'add';
+ok $r->add(rss_link => 'http://example.org/1');
 ok $r->add(rss_link => 'http://example.org/2');
 is_deeply($r->properties, $ref, 'properties')
     or print STDERR Dumper($r->properties);
 
-# get 
+note 'get ';
 my @links = $r->rss_link;
 is_deeply(\@links, ['http://example.org/1', 'http://example.org/2'], 'links');
 my $link = $r->rss_link;
 is_deeply($link, 'http://example.org/1', 'link');
 
-# save
+note 'save';
 ok $graph->save($r);
 
-# load
+note 'load';
 my $r2 = $graph->load('http://example.org/0');
 isa_ok($r2, 'MongoDB::RDF::Resource');
 is_deeply($r2->properties, $ref, 'properties')
     or print STDERR Dumper($r2->properties);
 
-# remove
+note 'remove';
 $graph->remove($r2);
 
-# load missing
+note 'load missing';
 my $r3 = $graph->load('http://example.org/0');
 ok(!$r3, 'has been removed');
 
-# blank nodes
+note 'blank nodes';
 my $blank = MongoDB::RDF::Resource->new;
 isa_ok($blank, 'MongoDB::RDF::Resource');
 ok($blank->uri, 'has a uri');
 
-# save
+note 'save';
 ok $graph->save($blank);
 
 my $blank2 = $graph->load($blank->uri);
@@ -102,6 +115,6 @@ isa_ok($blank2, 'MongoDB::RDF::Resource');
 ok($blank2->uri, 'has a uri');
 cmp_ok( $blank->mongodb_id, 'eq', $blank2->mongodb_id, 'same mongodb_id');
 
-# remove
+note 'remove';
 $graph->remove($blank);
 

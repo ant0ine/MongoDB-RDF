@@ -111,7 +111,6 @@ sub _new_from_document {
 =cut
 
 # TODO make decoded option the default ?
-
 sub properties {
     my $self = shift;
     my %opts = @_;
@@ -119,21 +118,34 @@ sub properties {
     for my $key ( keys %{ $self->document }) {
         next if $key eq '_id';
         next if $key eq '_subject';
-        my $value = $self->document->{$key};
+        my $value = $self->_property($key);
         $key = fdecode($key) if $opts{decoded};
         $p{$key} = $value;
     }
     return \%p;
 }
 
+# MongoDB cannot create compound indexes with array,
+# for this reason, if the property has only one element,
+# don't create the array.
 sub _property {
     my $self = shift;    
     my ($uri, $values) = @_;
+
     if ($values) {
         die 'must be an arrayref' unless ref $values eq 'ARRAY';    
-        $self->{document}{$uri} = $values;
+        if (@$values == 0) {
+                delete $self->{document}{$uri};
+        }
+        else {
+            my $v = @$values == 1 ? shift @$values : $values;
+            $self->{document}{$uri} = $v;
+        }
     }
-    return $self->{document}{$uri};
+
+    my $v = $self->{document}{$uri};
+    return undef unless defined $v;
+    return ref $v eq 'ARRAY' ? $v : [ $v ];
 }
 
 # object in the "subject predicate object" sense
