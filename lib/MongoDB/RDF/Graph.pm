@@ -28,11 +28,11 @@ sub _new {
     my %args = @_;
     my $self = bless {}, $class;
     for (qw(name mrdf)) {
-        die "$_ required" unless $args{$_};    
+        die "$_ required" unless $args{$_};
         $self->{$_} = $args{$_};
     }
     # TODO maintain a global cache of the ensured indexes
-    # the cost of ensure_index may not be negligable 
+    # the cost of ensure_index may not be negligable
     $self->collection->ensure_index({ _subject => 1 }, { unique => 1 });
     $self->ensure_index({ rdf_type => 1 });
     return $self;
@@ -53,7 +53,7 @@ sub name { $_[0]->{name} }
 =head2 $self->load( $uri )
 
 Loads a resource from the graph.
-If this resource has a registered rdf_type, then this resource 
+If this resource has a registered rdf_type, then this resource
 will be reblessed to the corresponding class.
 (See MongoDB::RDF::Resource->register_rdf_type)
 

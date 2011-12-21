@@ -28,7 +28,7 @@ sub cursor { $_[0]->{cursor} }
 =cut
 
 sub next {
-    my $self = shift;    
+    my $self = shift;
     my $doc = $self->cursor->next;
     return unless $doc;
     return MongoDB::RDF::Resource->_new_from_document($doc);
@@ -104,7 +104,7 @@ TODO explain why it sort by the first value of the predicate.
 
 =cut
 
-sub sort { 
+sub sort {
     my $self = shift;
     my ($order) = @_;
 

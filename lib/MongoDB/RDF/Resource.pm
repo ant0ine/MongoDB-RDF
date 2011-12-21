@@ -43,7 +43,7 @@ sub new {
     $self->set_subject($subject);
 
     if (my $type = $Class2rdf_type{$class}) {
-        $self->set(rdf_type => $type);    
+        $self->set(rdf_type => $type);
     }
 
     $self->init if $self->can('init');
@@ -59,7 +59,7 @@ Set the subject, if $uri is undef a blank node URI is created.
 =cut
 
 sub set_subject {
-    my $self = shift;    
+    my $self = shift;
     my ($uri) = @_;
     unless ($uri) {
         my $oid = MongoDB::OID->new;
@@ -76,7 +76,7 @@ Returns the subject.
 =cut
 
 sub subject {
-    my $self = shift;    
+    my $self = shift;
     return $self->{document}{_subject};
 }
 
@@ -128,11 +128,11 @@ sub properties {
 # for this reason, if the property has only one element,
 # don't create the array.
 sub _property {
-    my $self = shift;    
+    my $self = shift;
     my ($uri, $values) = @_;
 
     if ($values) {
-        die 'must be an arrayref' unless ref $values eq 'ARRAY';    
+        die 'must be an arrayref' unless ref $values eq 'ARRAY';
         if (@$values == 0) {
                 delete $self->{document}{$uri};
         }
@@ -149,7 +149,7 @@ sub _property {
 
 # object in the "subject predicate object" sense
 sub _value2object {
-    my $self = shift;    
+    my $self = shift;
     my ($value) = @_;
     if (looks_like_uri($value)) {
         return { type => 'uri', value => canonical_uri($value) };
@@ -160,7 +160,7 @@ sub _value2object {
 }
 
 sub _object2value {
-    my $self = shift;    
+    my $self = shift;
     my ($object, $opts) = @_;
     if (my $graph = $opts->{instanciate}) {
         die '['.$self->mongodb_id.'] type is not uri, value: '.$object->{value}
@@ -190,7 +190,7 @@ Example:
 =cut
 
 sub get {
-    my $self = shift;    
+    my $self = shift;
     my ($predicate) = @_;
     my $uri = fencode(resolve($predicate));
     my @values = map {
@@ -204,7 +204,7 @@ sub get {
 =cut
 
 sub add {
-    my $self = shift;    
+    my $self = shift;
     my ($predicate, $value) = @_;
     my $uri = fencode(resolve($predicate));
     my $props = $self->_property($uri);
@@ -218,7 +218,7 @@ sub add {
 =cut
 
 sub del {
-    my $self = shift;    
+    my $self = shift;
     my ($predicate, $value) = @_;
     my $uri = fencode(resolve($predicate));
     my $props = $self->_property($uri);
@@ -237,7 +237,7 @@ or $self->set( $predicate ); to remove all the values.
 =cut
 
 sub set {
-    my $self = shift;    
+    my $self = shift;
     my $predicate = shift;
     my $values = \@_;
     my $uri = fencode(resolve($predicate));
@@ -284,11 +284,11 @@ Returns a RDF/JSON document. See <http://n2.talis.com/wiki/RDF_JSON_Specificatio
 =cut
 
 sub as_rdf_json {
-    my $self = shift;    
+    my $self = shift;
     my $obj = {
         $self->subject => $self->properties
     };
-    my $j = JSON::Any->new; 
+    my $j = JSON::Any->new;
     return $j->objToJson($obj);
 }
 
@@ -297,8 +297,8 @@ sub as_rdf_json {
 =cut
 
 sub as_rdf_xml {
-    my $self = shift;    
-    # TODO 
+    my $self = shift;
+    # TODO
 }
 
 =head2 $self->as_ntriples
@@ -351,7 +351,7 @@ MongoDB::RDF::Resource can be subsclassed like this:
  $graph->save($r);
 
  ...
- 
+
  my $r = $graph->load('http://myinstance');
  # $r is a MyClass
 

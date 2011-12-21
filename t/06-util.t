@@ -43,6 +43,6 @@ my %canonicals = (
 
 for (keys %canonicals) {
     my $expected = $canonicals{$_};
-    cmp_ok( canonical_uri($_), 'eq', $expected);    
+    cmp_ok( canonical_uri($_), 'eq', $expected);
 }
 

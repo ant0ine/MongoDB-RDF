@@ -45,11 +45,11 @@ isa_ok($graph, 'MongoDB::RDF::Graph');
     my $cursor2 = $graph->find({ dc_title => 'my title' });
     isa_ok($cursor2, 'MongoDB::RDF::Cursor');
     cmp_ok($cursor2->count, '==', 1, 'one result');
-    
+
     # check that no index is used
     $cursor = $graph->find({ dc_title => 'my title' });
     ok $cursor->explain->{cursor} =~ /BasicCursor/, 'no index used';
-    
+
     # add an index on dc_title
     $graph->ensure_index({ dc_title => 1}, { name => 'test_index', safe => 1 });
     $cursor = $graph->find({ dc_title => 'my title' });
@@ -90,7 +90,7 @@ isa_ok($graph, 'MongoDB::RDF::Graph');
     $cursor->reset;
     @subset = $cursor->limit(2)->skip(3)->all;
     cmp_ok(scalar(@subset), '==', 2, '2 results');
-    
+
     # or
     my $query = { '$or' => [
         { dc_description => 1 },
