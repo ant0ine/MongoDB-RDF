@@ -8,7 +8,7 @@ use Encode;
 
 =head1 DESCRIPTION
 
-NTriples serialization 
+NTriples serialization
 
 =cut
 
@@ -32,7 +32,7 @@ sub _encode_literal {
     $l =~ s/\r/\\r/g;
     $l =~ s/\t/\\t/g;
     $l =~ s/\"/\\"/g;
-    return $l; 
+    return $l;
 }
 
 =head2 serialize_resource
@@ -60,7 +60,7 @@ sub _save_triplet {
     my ($graph, $s, $p, $o) = @_;
     my $resource = $graph->load($s) || MongoDB::RDF::Resource->new($s);
     $resource->add($p => $o);
-    $graph->save($resource); 
+    $graph->save($resource);
 }
 
 sub _clean_line {
@@ -72,7 +72,7 @@ sub _clean_line {
     $line = Encode::decode_utf8($line);
     $line =~ s/^\s+//;
     $line =~ s/\s+$//;
-    return $line; 
+    return $line;
 }
 
 sub _decode_literal {

@@ -4,7 +4,7 @@ use warnings;
 
 =head2 $class->dump( resource => ... )
 
-or 
+or
 
  $class->dump( graph => ... )
  $class->dump( graph => ..., filename => ... )
@@ -38,7 +38,7 @@ sub dump {
 
     }
     else {
-        die "graph or resource required";    
+        die "graph or resource required";
     }
 
     $fh->close if $fh;
@@ -66,8 +66,8 @@ sub serialize_resource { die 'to be overwritten' }
 
 =head2 $class->load( graph => ..., filename => ... )
 
-or 
- $class->load( graph => ... ); # read STDIN 
+or
+ $class->load( graph => ... ); # read STDIN
 
 =cut
 

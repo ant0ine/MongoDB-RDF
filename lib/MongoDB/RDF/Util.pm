@@ -33,8 +33,8 @@ sub looks_like_uri {  # XXX we may want to not guess, and assume that the value 
 
 =head2 fencode
 
-MongoDB doesn't allow '.' in the field names. 
-As the fields names here are URIs, we just encode the '.' to '%2E' 
+MongoDB doesn't allow '.' in the field names.
+As the fields names here are URIs, we just encode the '.' to '%2E'
 
 =cut
 
@@ -66,7 +66,7 @@ sub convert_query {
     $convert_q = sub {
         my ($query) = @_;
         for my $key (keys %$query) {
-            # make this recursive in this case 
+            # make this recursive in this case
             if ($key eq '$or') {
                 $convert_q->($_) for @{ $query->{$key} };
             }

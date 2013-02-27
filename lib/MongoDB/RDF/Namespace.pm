@@ -30,7 +30,7 @@ sub resolve {
             return $uri.$name;
         }
     }
-    return $local; 
+    return $local;
 }
 
 =head2 register

@@ -18,9 +18,9 @@ MongoDB::RDF - Stores RDF-JSON documents in MongoDB.
  my $mrdf = MongoDB::RDF->new(
      database => MongoDB::Connection->new(host => 'localhost', port => 27017)->test_rdf
  );
- 
+
  my $graph = $mrdf->default_graph;
- 
+
  my $r = MongoDB::RDF::Resource->new('http://example.org/0');
  $r->dc_title('my title');
  $graph->save($r);
